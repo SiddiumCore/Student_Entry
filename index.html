@@ -296,7 +296,7 @@
                 </p>
                 <div class="actions">
                     <a class="button primary" id="openButton" href="#" style="display: none;">Open dashboard</a>
-                    <a class="button primary" id="downloadButton" href="#" style="display: none;">Download desktop program</a>
+                    <a class="button primary" id="downloadButton" href="#">Download desktop program</a>
                     <button class="button secondary" id="retryButton" type="button">Check again</button>
                 </div>
                 <p class="small" id="helperText">Looking for the local app on ports 8000-8020.</p>
@@ -379,7 +379,7 @@
             leadText.textContent = "Keep this page open while the desktop program starts. The processing engine, PDFs, Excel files, and Python services stay on this computer.";
             helperText.textContent = "Looking for the local app on ports 8000-8020.";
             openButton.style.display = "none";
-            downloadButton.style.display = "none";
+            downloadButton.style.display = "inline-flex";
             appMetric.textContent = "Checking";
             urlMetric.textContent = "Waiting";
             configMetric.textContent = "Unknown";
@@ -394,7 +394,7 @@
                     leadText.textContent = "Opening the local dashboard now. All PDF processing and generated files stay on this computer.";
                     openButton.href = uiUrl;
                     openButton.style.display = "inline-flex";
-                    downloadButton.style.display = "none";
+                    downloadButton.style.display = "inline-flex";
                     appMetric.textContent = `${data.name || "Student Entry Automation"} ${data.version || ""}`.trim();
                     urlMetric.textContent = uiUrl;
                     configMetric.textContent = data.config_loaded ? "Ready" : "Needs config";
