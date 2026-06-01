@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Entry Automation</title>
+    <style>
+        :root {
+            --ink: #172033;
+            --muted: #667085;
+            --line: #d9e0e8;
+            --panel: #ffffff;
+            --page: #f5f7fb;
+            --blue: #2563eb;
+            --blue-dark: #1d4ed8;
+            --green: #15956f;
+            --green-soft: #e8f7f1;
+            --amber: #a76600;
+            --amber-soft: #fff3d8;
+            --red: #b42318;
+            --red-soft: #fee4e2;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--page);
+            color: var(--ink);
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .shell {
+            width: min(980px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 42px 0;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .mark {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #172033;
+            color: #fff;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .brand-title {
+            margin: 0;
+            font-size: 22px;
+            line-height: 1.15;
+        }
+
+        .brand-subtitle {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: var(--panel);
+            padding: 8px 12px;
+            color: var(--muted);
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #98a2b3;
+        }
+
+        .status-pill.online {
+            color: var(--green);
+            border-color: #afe5d2;
+            background: var(--green-soft);
+        }
+
+        .status-pill.online .dot {
+            background: var(--green);
+        }
+
+        .status-pill.offline {
+            color: var(--amber);
+            border-color: #f5d58a;
+            background: var(--amber-soft);
+        }
+
+        .status-pill.offline .dot {
+            background: var(--amber);
+        }
+
+        .status-pill.error {
+            color: var(--red);
+            border-color: #fecdca;
+            background: var(--red-soft);
+        }
+
+        .status-pill.error .dot {
+            background: var(--red);
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: 0 18px 50px rgba(23, 32, 51, 0.08);
+            overflow: hidden;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            min-height: 430px;
+        }
+
+        .main-copy {
+            padding: 46px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: clamp(32px, 5vw, 56px);
+            line-height: 1.02;
+            letter-spacing: 0;
+        }
+
+        .lead {
+            margin: 18px 0 0;
+            max-width: 600px;
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.55;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .button {
+            appearance: none;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+        }
+
+        .primary {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        .primary:hover {
+            background: var(--blue-dark);
+        }
+
+        .secondary {
+            background: #fff;
+            color: var(--ink);
+            border-color: var(--line);
+        }
+
+        .secondary:hover {
+            border-color: #98a2b3;
+        }
+
+        .side {
+            border-left: 1px solid var(--line);
+            background: #eef2f7;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .metric {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .metric-label {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .small {
+            margin-top: 16px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        @media (max-width: 760px) {
+            .shell {
+                width: min(100% - 22px, 980px);
+                padding: 22px 0;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .main-copy {
+                padding: 30px 22px;
+            }
+
+            .side {
+                border-left: 0;
+                border-top: 1px solid var(--line);
+                padding: 22px;
+            }
+
+            .button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <header class="topbar">
+            <div class="brand">
+                <div class="mark">SE</div>
+                <div>
+                    <h1 class="brand-title">Student Entry Automation</h1>
+                    <p class="brand-subtitle">Desktop agent launcher</p>
+                </div>
+            </div>
+            <div class="status-pill" id="statusPill">
+                <span class="dot"></span>
+                <span id="statusText">Checking local agent</span>
+            </div>
+        </header>
+
+        <section class="panel hero">
+            <div class="main-copy">
+                <h2 id="headline">Connecting to your local dashboard</h2>
+                <p class="lead" id="leadText">
+                    Keep this page open while the desktop program starts. The processing engine, PDFs, Excel files, and Python services stay on this computer.
+                </p>
+                <div class="actions">
+                    <a class="button primary" id="openButton" href="#" style="display: none;">Open dashboard</a>
+                    <a class="button primary" id="downloadButton" href="#" style="display: none;">Download desktop program</a>
+                    <button class="button secondary" id="retryButton" type="button">Check again</button>
+                </div>
+                <p class="small" id="helperText">Looking for the local app on ports 8000-8020.</p>
+            </div>
+            <aside class="side">
+                <div class="metric">
+                    <div class="metric-label">Local app</div>
+                    <div class="metric-value" id="appMetric">Not connected yet</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Local URL</div>
+                    <div class="metric-value" id="urlMetric">Waiting</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Configuration</div>
+                    <div class="metric-value" id="configMetric">Unknown</div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script>
+        const SETTINGS = {
+            downloadUrl: "https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY/releases/latest/download/StudentEntryAutomation-Windows.zip",
+            hosts: ["127.0.0.1", "localhost"],
+            firstPort: 8000,
+            lastPort: 8020,
+            autoOpen: true
+        };
+
+        const statusPill = document.getElementById("statusPill");
+        const statusText = document.getElementById("statusText");
+        const headline = document.getElementById("headline");
+        const leadText = document.getElementById("leadText");
+        const openButton = document.getElementById("openButton");
+        const downloadButton = document.getElementById("downloadButton");
+        const retryButton = document.getElementById("retryButton");
+        const helperText = document.getElementById("helperText");
+        const appMetric = document.getElementById("appMetric");
+        const urlMetric = document.getElementById("urlMetric");
+        const configMetric = document.getElementById("configMetric");
+
+        downloadButton.href = SETTINGS.downloadUrl;
+        retryButton.addEventListener("click", () => detectLocalAgent({ manual: true }));
+
+        function setStatus(kind, text) {
+            statusPill.className = `status-pill ${kind}`;
+            statusText.textContent = text;
+        }
+
+        function candidateUrls() {
+            const urls = [];
+            for (let port = SETTINGS.firstPort; port <= SETTINGS.lastPort; port += 1) {
+                for (const host of SETTINGS.hosts) {
+                    urls.push(`http://${host}:${port}`);
+                }
+            }
+            return urls;
+        }
+
+        async function fetchWithTimeout(url, timeoutMs) {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), timeoutMs);
+            try {
+                const response = await fetch(`${url}/api/desktop/status`, {
+                    cache: "no-store",
+                    mode: "cors",
+                    signal: controller.signal
+                });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return await response.json();
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        async function detectLocalAgent(options = {}) {
+            setStatus("", "Checking local agent");
+            headline.textContent = "Connecting to your local dashboard";
+            leadText.textContent = "Keep this page open while the desktop program starts. The processing engine, PDFs, Excel files, and Python services stay on this computer.";
+            helperText.textContent = "Looking for the local app on ports 8000-8020.";
+            openButton.style.display = "none";
+            downloadButton.style.display = "none";
+            appMetric.textContent = "Checking";
+            urlMetric.textContent = "Waiting";
+            configMetric.textContent = "Unknown";
+
+            for (const baseUrl of candidateUrls()) {
+                try {
+                    const data = await fetchWithTimeout(baseUrl, 900);
+                    if (data.app_id !== "student-entry-automation") continue;
+                    const uiUrl = data.ui_url || `${baseUrl}/`;
+                    setStatus("online", "Local agent running");
+                    headline.textContent = "Desktop agent connected";
+                    leadText.textContent = "Opening the local dashboard now. All PDF processing and generated files stay on this computer.";
+                    openButton.href = uiUrl;
+                    openButton.style.display = "inline-flex";
+                    downloadButton.style.display = "none";
+                    appMetric.textContent = `${data.name || "Student Entry Automation"} ${data.version || ""}`.trim();
+                    urlMetric.textContent = uiUrl;
+                    configMetric.textContent = data.config_loaded ? "Ready" : "Needs config";
+                    helperText.textContent = data.processing_active ? "A run is active in the local desktop app." : "The local desktop app is idle.";
+
+                    const shouldAutoOpen = SETTINGS.autoOpen && !options.manual && !new URLSearchParams(location.search).has("stay");
+                    if (shouldAutoOpen) {
+                        setTimeout(() => window.location.replace(uiUrl), 900);
+                    }
+                    return;
+                } catch (error) {
+                    // Try the next local host/port candidate.
+                }
+            }
+
+            setStatus("offline", "Local agent not running");
+            headline.textContent = "Start the desktop program";
+            leadText.textContent = "The website is ready, but the local desktop agent is not running on this computer.";
+            downloadButton.style.display = "inline-flex";
+            openButton.style.display = "none";
+            appMetric.textContent = "Not running";
+            urlMetric.textContent = "No local server found";
+            configMetric.textContent = "Start the EXE";
+            helperText.textContent = "After installing, run StudentEntryAutomation.exe and this page will connect automatically.";
+        }
+
+        detectLocalAgent();
+        setInterval(() => detectLocalAgent(), 5000);
+    </script>
+</body>
+</html>
